@@ -117,7 +117,7 @@ def is_full(
     parking_poly: List[Tuple[int, int]],
     *,
     center_required: bool = True,
-    overlap_threshold: float = 0.15
+    overlap_threshold: float = 0.2
 ) -> bool:
     """
     Returns True if the spot is 'full' given a car bounding box and a parking polygon.

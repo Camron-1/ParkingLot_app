@@ -133,7 +133,7 @@ while True:
 
                 # check this spot against all detected car boxes
                 for (x1, y1, x2, y2) in last_car_boxes:
-                    if is_full((x1, y1, x2, y2), poly, center_required=True, overlap_threshold=0.15):
+                    if is_full((x1, y1, x2, y2), poly, center_required=True, overlap_threshold=0.2):
                         spot_is_full = True
                         break
 

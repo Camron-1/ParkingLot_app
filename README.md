@@ -32,8 +32,8 @@ Parking spots are manually defined as polygons, and the system determines whethe
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/CAR-DETECTION.git
-cd CAR-DETECTION
+git clone https://github.com/PublicStaticOussama/ParkSense.git
+cd ParkSense
 ```
 
 Install dependencies:
@@ -59,7 +59,7 @@ python main.py
 ### Run with a custom YouTube stream
 
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID"
+python main.py --url "https://www.youtube.com/watch?v=VIDEO_ID"
 ```
 
 If no URL is provided, the system automatically falls back to the default stream defined in `main.py`.
