@@ -1,6 +1,10 @@
+
+import argparse
+import subprocess
+
 import cv2
 import numpy as np
-import subprocess
+
 from typing import Union, Tuple, List, Optional
 
 from ultralytics import YOLO
@@ -21,17 +25,16 @@ root.destroy()
 
 
 
-
-
-
-
-
-
-
 # -----------------------------
 # Main (stream + render)
 # -----------------------------
-YOUTUBE_URL = "https://www.youtube.com/watch?v=4a-3iEM7bHk"
+parser = argparse.ArgumentParser(description="Smart Parking Detection Stream")
+parser.add_argument("--url", type=str, help="YouTube stream URL")
+args = parser.parse_args()
+
+DEFAULT_YOUTUBE_URL = "https://www.youtube.com/watch?v=4a-3iEM7bHk"
+YOUTUBE_URL = args.url if args.url else DEFAULT_YOUTUBE_URL
+
 stream_url, w, h, fmt_id, proto = pick_best_video_format(YOUTUBE_URL)
 
 w, h = fit_to_screen(w, h, screen_w, screen_h)
