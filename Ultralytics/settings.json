@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "/Users/camroncriddell/Projects/Parkinglot_sim/ParkSense/datasets",
+  "weights_dir": "weights",
+  "runs_dir": "runs",
+  "uuid": "f0556476da3681c72554547db1f5c8e872f2b7e8a23e545ad3dac593a6f9c622",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}

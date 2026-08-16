@@ -1,11 +1,19 @@
 
 import argparse
+import os
+import shutil
 import subprocess
 
 import cv2
 import numpy as np
 
 from typing import Union, Tuple, List, Optional
+
+# Use a local config directory so ultralytics does not try to write to protected
+# macOS user folders and fail with permission errors.
+local_ultralytics_dir = os.path.join(os.getcwd(), "Ultralytics")
+os.makedirs(local_ultralytics_dir, exist_ok=True)
+os.environ.setdefault("YOLO_CONFIG_DIR", local_ultralytics_dir)
 
 from ultralytics import YOLO
 
@@ -47,8 +55,14 @@ print("Chosen format:", fmt_id, proto, f"{w}x{h}")
 if not w or not h:
     raise RuntimeError("Could not get width/height from format metadata.")
 
+ffmpeg_bin = shutil.which("ffmpeg") or "/opt/homebrew/bin/ffmpeg"
+if not os.path.isfile(ffmpeg_bin) and not shutil.which(ffmpeg_bin):
+    raise RuntimeError(
+        "ffmpeg is required but could not be found. Install it and ensure it is on PATH."
+    )
+
 ffmpeg_cmd = [
-    "ffmpeg",
+    ffmpeg_bin,
     "-hide_banner", "-loglevel", "error",
 
     "-fflags", "nobuffer",
@@ -63,7 +77,9 @@ ffmpeg_cmd = [
     "-i", stream_url,
 
     "-an",
-    "-vsync", "0",
+    # `-vsync 0` is unsupported on some ffmpeg versions, use `-copyts` + `-fflags nobuffer` instead
+    "-copyts",
+    "-fflags", "+genpts",
 
     "-vf", f"scale={w}:{h}",
 
@@ -133,7 +149,12 @@ while True:
 
                 # check this spot against all detected car boxes
                 for (x1, y1, x2, y2) in last_car_boxes:
-                    if is_full((x1, y1, x2, y2), poly, center_required=True, overlap_threshold=0.2):
+                    if is_full(
+                        (x1, y1, x2, y2),
+                        poly,
+                        center_required=False,
+                        overlap_threshold=0.05,
+                    ):
                         spot_is_full = True
                         break
 

@@ -44,8 +44,8 @@ def pick_best_video_format(url: str):
                 except:
                     pass
 
-        # skip tiny formats
-        if h < 240 or w < 320:
+        # skip invalid or tiny formats
+        if not w or not h or h < 240 or w < 320:
             continue
 
         protocol = f.get("protocol") or ""
