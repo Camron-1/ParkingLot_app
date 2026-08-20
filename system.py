@@ -1,4 +1,6 @@
 from typing import List, Tuple
+from datetime import datetime, timezone
+
 from ui.components import *
 from utils.sort_layout import *
 
@@ -31,6 +33,9 @@ class System:
     # close button (position updated dynamically)
     close_button: Optional[Button] = None
 
+    # occupied_spots:int= 0
+    # available_spots:int= 0
+
 
 
 # -----------------------------
@@ -46,8 +51,71 @@ add_spot_button = Button(x=180, y=40, w=140, h=50, text="add spot", backgroundCo
 end_button      = Button(x=340, y=40, w=100, h=50, text="end",      backgroundColor=end_btn_color)
 layout_button   = Button(x=460, y=40, w=140, h=50, text="layout",   backgroundColor=layout_btn_color)
 
+def update_capacity():
+    occupied_spots = 0
+    available_spots = 0
 
+    for row in System.rows:
+        for spot in row.spots:
+            if spot.full:
+                occupied_spots += 1
+            else:
+                available_spots += 1
 
+    capacity = occupied_spots + available_spots
+
+    parking_status = create_parking_status(
+        parking_lot_id="lot-a",
+        name="Building 1 North Lot",
+        capacity=capacity,
+        occupied=occupied_spots
+    )
+
+    print(parking_status)
+
+    return parking_status
+    
+
+def create_parking_status(
+    parking_lot_id,
+    name,
+    capacity,
+    occupied
+):
+    # Prevent occupied from going below 0 or above capacity
+    occupied = max(0, min(occupied, capacity))
+
+    # Calculate available spaces
+    available = capacity - occupied
+
+    # Calculate occupancy percentage
+    if capacity > 0:
+        occupancy_percentage = round((occupied / capacity) * 100, 2)
+    else:
+        occupancy_percentage = 0.0
+
+    # Determine parking lot status
+    if available == 0:
+        status = "FULL"
+    elif occupancy_percentage >= 80:
+        status = "LIMITED"
+    else:
+        status = "AVAILABLE"
+
+    # Create the final parking lot object
+    parking_status = {
+        "parkingLotId": parking_lot_id,
+        "name": name,
+        "capacity": capacity,
+        "occupied": occupied,
+        "available": available,
+        "occupancyPercentage": occupancy_percentage,
+        "status": status,
+        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    }
+
+    return parking_status
+    
 def refresh_buttons():
     """
     Normal mode buttons. (Layout mode will override buttons to just [X].)
@@ -122,6 +190,9 @@ def onEndRow(x, y):
     refresh_buttons()
     print("✅ End row editing")
 
+    print(f"Test") 
+
+    update_capacity()
 
 def open_layout():
     # Snapshot current interaction state so we can restore it after closing

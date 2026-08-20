@@ -3,6 +3,11 @@ import argparse
 import os
 import shutil
 import subprocess
+import threading
+from datetime import datetime, timezone
+import uvicorn
+
+from fastapi import FastAPI
 
 import cv2
 import numpy as np
@@ -88,6 +93,28 @@ ffmpeg_cmd = [
     "pipe:1",
 ]
 
+app = FastAPI()
+
+
+
+
+@app.get("/api/v1/parking-lots")
+def get_parking_lots():
+    parking_status = update_capacity()
+    return [parking_status]
+
+@app.get("/api/v1/parking-lots/lot-a")
+def get_parking_lot():
+    parking_status = update_capacity()
+    return parking_status
+
+
+def run_api_server():
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+
+
+threading.Thread(target=run_api_server, daemon=True).start()
+
 proc = subprocess.Popen(
     ffmpeg_cmd,
     stdout=subprocess.PIPE,
@@ -159,9 +186,10 @@ while True:
                         break
 
                 spot.full = spot_is_full
-    # ======================= DETECTION CODE ====================
+                 # ======================= DETECTION CODE ====================
 
     # Draw existing rows/spots on main view (optional)
+         # Draw existing rows/spots on main view (optional)
     for row in System.rows:
         row.draw(frame, thickness=2, color="cyan")
 
@@ -172,6 +200,7 @@ while True:
     # Draw UI buttons (normal mode) OR just X button (layout mode)
     for btn in System.buttons:
         btn.draw(frame)
+    update_capacity()
 
     # HUD (kept simple)
     cv2.putText(frame, f"Rows: {len(System.rows)}", (20, 110),
@@ -205,3 +234,4 @@ while True:
 
 proc.terminate()
 cv2.destroyAllWindows()
+
